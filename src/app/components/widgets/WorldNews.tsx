@@ -101,7 +101,14 @@ export default function WorldNews() {
   }, [autoScroll, tick]);
 
   const handleToggle = () => {
-    setAutoScroll((prev) => !prev);
+    setAutoScroll((prev) => {
+      const next = !prev;
+      if (next) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = requestAnimationFrame(tick);
+      }
+      return next;
+    });
   };
 
   const pauseAutoScroll = () => setAutoScroll(false);
