@@ -215,6 +215,58 @@ body {
   box-shadow: var(--glow-border);
 }
 
+/* ============================================
+   Widget Shell — clip-path & scan animation
+   ============================================ */
+
+.widget-shell-clip {
+  clip-path: polygon(
+    0 8px,
+    8px 0,
+    100% 0,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    0 100%
+  );
+}
+
+.widget-shell-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 255, 65, 0.02) 3px,
+    rgba(0, 255, 65, 0.02) 6px
+  );
+}
+
+@keyframes hud-scan {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.widget-scan-bar {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(0, 255, 65, 0.1);
+}
+
+.widget-scan-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, var(--hud-border), transparent);
+  animation: hud-scan 1.5s ease-in-out infinite;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
