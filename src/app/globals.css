@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   SITREP HUD — Design System Variables
+   ============================================ */
+
+:root {
+  /* Core palette */
+  --hud-bg: #0a0a0a;
+  --hud-bg-panel: #0d0d0d;
+  --hud-border: #00ff41;
+  --hud-text: #b5ffb8;
+  --hud-text-dim: #4a7a4c;
+  --hud-amber: #ffbf00;
+  --hud-red: #ff3333;
+  --hud-cyan: #00e5ff;
+
+  /* Typography */
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Glow effects */
+  --glow-border: 0 0 8px rgba(0, 255, 65, 0.4), 0 0 20px rgba(0, 255, 65, 0.15);
+  --glow-border-subtle: 0 0 4px rgba(0, 255, 65, 0.25), 0 0 10px rgba(0, 255, 65, 0.08);
+  --glow-text: 0 0 6px rgba(0, 255, 65, 0.6), 0 0 12px rgba(0, 255, 65, 0.3);
+}
+
+/* ============================================
+   Base reset
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: var(--hud-bg);
+  color: var(--hud-text);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Scanline overlay effect
+   ============================================ */
+
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 255, 65, 0.015) 2px,
+    rgba(0, 255, 65, 0.015) 4px
+  );
+}
+
+/* ============================================
+   HUD widget panel base
+   ============================================ */
+
+@layer components {
+  .hud-panel {
+    @apply relative overflow-hidden rounded-sm;
+    background: var(--hud-bg-panel);
+    border: 1px solid var(--hud-border);
+    box-shadow: var(--glow-border);
+  }
+
+  .hud-panel-subtle {
+    @apply relative overflow-hidden rounded-sm;
+    background: var(--hud-bg-panel);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    box-shadow: var(--glow-border-subtle);
+  }
+
+  /* Panel scanline overlay (per-widget) */
+  .hud-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 255, 65, 0.02) 3px,
+      rgba(0, 255, 65, 0.02) 6px
+    );
+  }
+}
+
+/* ============================================
+   Widget grid layout
+   ============================================ */
+
+.widget-grid {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .widget-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .widget-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Widget size variants */
+.widget-1x1 { grid-column: span 1; grid-row: span 1; }
+.widget-2x1 { grid-column: span 1; grid-row: span 1; }
+.widget-2x2 { grid-column: span 1; grid-row: span 2; }
+.widget-4x1 { grid-column: span 1; grid-row: span 1; }
+
+@media (min-width: 768px) {
+  .widget-2x1 { grid-column: span 2; }
+  .widget-2x2 { grid-column: span 2; }
+  .widget-4x1 { grid-column: span 2; }
+}
+
+@media (min-width: 1280px) {
+  .widget-4x1 { grid-column: span 4; }
+}
+
+/* ============================================
+   Glitch text effect
+   ============================================ */
+
+@keyframes glitch {
+  0%, 100% {
+    text-shadow:
+      2px 0 var(--hud-cyan),
+      -2px 0 var(--hud-red);
+    transform: translate(0);
+  }
+  20% {
+    text-shadow:
+      -2px 0 var(--hud-cyan),
+      2px 0 var(--hud-red);
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    text-shadow:
+      2px 0 var(--hud-red),
+      -2px 0 var(--hud-cyan);
+    transform: translate(1px, -1px);
+  }
+  60% {
+    text-shadow:
+      -1px 0 var(--hud-cyan),
+      1px 0 var(--hud-red);
+    transform: translate(-1px, 0);
+  }
+  80% {
+    text-shadow:
+      1px 0 var(--hud-red),
+      -1px 0 var(--hud-cyan);
+    transform: translate(1px, 1px);
+  }
+}
+
+.glitch-text {
+  animation: glitch 3s infinite;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--hud-border);
+  text-shadow: var(--glow-text);
+}
+
+.glitch-text:hover {
+  animation-duration: 0.3s;
+}
+
+/* ============================================
+   Status blink
+   ============================================ */
+
+@keyframes status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.status-blink {
+  animation: status-blink 1.5s ease-in-out infinite;
+}
+
+/* ============================================
+   Utility classes
+   ============================================ */
+
+.text-hud-glow {
+  text-shadow: var(--glow-text);
+}
+
+.border-hud-glow {
+  box-shadow: var(--glow-border);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--hud-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 65, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 65, 0.5);
+}
