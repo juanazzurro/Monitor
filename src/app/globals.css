@@ -311,3 +311,15 @@ body {
   border-left: 2px solid var(--hud-amber);
   padding-left: 8px;
 }
+
+/* ============================================
+   ArgentinaEcon — Amber-themed widget overrides
+   ============================================ */
+
+.argentina-econ-shell ::-webkit-scrollbar-thumb {
+  background: rgba(255, 191, 0, 0.3);
+}
+
+.argentina-econ-shell ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 191, 0, 0.5);
+}

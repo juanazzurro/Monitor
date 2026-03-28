@@ -2,6 +2,7 @@ import { WidgetConfig, WidgetSize, WidgetCategory } from "@/types/widget";
 import PlaceholderWidget from "@/app/components/widgets/PlaceholderWidget";
 import MarketTicker from "@/app/components/widgets/MarketTicker";
 import WorldNews from "@/app/components/widgets/WorldNews";
+import ArgentinaEcon from "@/app/components/widgets/ArgentinaEcon";
 
 export const WIDGET_SIZE_CLASS: Record<WidgetSize, string> = {
   sm: "widget-1x1",
@@ -35,18 +36,12 @@ export const widgets: WidgetConfig[] = [
     category: "custom",
   },
   {
-    id: "placeholder-2",
-    title: "STANDBY",
-    size: "sm",
-    component: PlaceholderWidget,
-    category: "markets",
-  },
-  {
-    id: "placeholder-3",
-    title: "STANDBY",
-    size: "sm",
-    component: PlaceholderWidget,
-    category: "crypto",
+    id: "argentina-econ",
+    title: "ECON ARGENTINA",
+    size: "lg",
+    refreshInterval: 300000,
+    component: ArgentinaEcon,
+    category: "argentina",
   },
   {
     id: "world-news",
