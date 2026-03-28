@@ -97,17 +97,19 @@ export default function ArgentinaEcon() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
-  const userPausedRef = useRef(false);
   const animFrameRef = useRef<number>(0);
+  const isProgrammaticScrollRef = useRef(false);
 
   const tick = useCallback(() => {
     const el = scrollRef.current;
     if (!el || !autoScroll) return;
 
+    isProgrammaticScrollRef.current = true;
     el.scrollTop += 0.5;
     if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
       el.scrollTop = 0;
     }
+    isProgrammaticScrollRef.current = false;
 
     animFrameRef.current = requestAnimationFrame(tick);
   }, [autoScroll]);
@@ -120,16 +122,29 @@ export default function ArgentinaEcon() {
   }, [autoScroll, tick]);
 
   const handleToggle = () => {
-    const next = !autoScroll;
-    userPausedRef.current = !next;
-    setAutoScroll(next);
+    setAutoScroll((prev) => !prev);
   };
 
-  const handleMouseEnter = () => {
-    if (!userPausedRef.current) setAutoScroll(false);
+  const pauseAutoScroll = () => setAutoScroll(false);
+
+  const scrollByStep = (direction: "up" | "down") => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const step = Math.max(80, Math.floor(el.clientHeight * 0.35));
+    const delta = direction === "up" ? -step : step;
+
+    pauseAutoScroll();
+    isProgrammaticScrollRef.current = true;
+    el.scrollBy({ top: delta, behavior: "smooth" });
+    window.setTimeout(() => {
+      isProgrammaticScrollRef.current = false;
+    }, 220);
   };
-  const handleMouseLeave = () => {
-    if (!userPausedRef.current) setAutoScroll(true);
+
+  const handleManualScroll = () => {
+    if (isProgrammaticScrollRef.current) return;
+    pauseAutoScroll();
   };
 
   if (isLoading) {
@@ -170,7 +185,7 @@ export default function ArgentinaEcon() {
     <div className="argentina-econ-shell flex h-full flex-col">
       {/* Status bar */}
       <div
-        className="flex items-center justify-between px-3 py-1"
+        className="flex items-center justify-between gap-2 px-3 py-1"
         style={{ borderBottom: "1px solid rgba(255, 191, 0, 0.15)" }}
       >
         <span
@@ -179,26 +194,58 @@ export default function ArgentinaEcon() {
         >
           {data?.items.length ?? 0} ALERTAS · {highCount} PRIORITY
         </span>
-        <button
-          onClick={handleToggle}
-          className="text-[9px] tracking-wider uppercase"
-          style={{
-            color: autoScroll ? "var(--hud-amber)" : "var(--hud-text-dim)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          AUTOSCROLL {autoScroll ? "ON" : "OFF"}
-        </button>
+
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => scrollByStep("up")}
+            className="px-1 text-[9px] tracking-wider uppercase"
+            style={{
+              color: "var(--hud-text-dim)",
+              background: "none",
+              border: "1px solid rgba(255, 191, 0, 0.2)",
+              cursor: "pointer",
+            }}
+            aria-label="Scroll up"
+            title="Scroll up"
+          >
+            ▲
+          </button>
+          <button
+            onClick={() => scrollByStep("down")}
+            className="px-1 text-[9px] tracking-wider uppercase"
+            style={{
+              color: "var(--hud-text-dim)",
+              background: "none",
+              border: "1px solid rgba(255, 191, 0, 0.2)",
+              cursor: "pointer",
+            }}
+            aria-label="Scroll down"
+            title="Scroll down"
+          >
+            ▼
+          </button>
+          <button
+            onClick={handleToggle}
+            className="px-1 text-[9px] tracking-wider uppercase"
+            style={{
+              color: autoScroll ? "var(--hud-amber)" : "var(--hud-text-dim)",
+              background: "none",
+              border: "1px solid rgba(255, 191, 0, 0.2)",
+              cursor: "pointer",
+            }}
+          >
+            AUTOSCROLL {autoScroll ? "ON" : "OFF"}
+          </button>
+        </div>
       </div>
 
       {/* News list */}
       <div
         ref={scrollRef}
         className="min-h-0 flex-1 overflow-y-auto"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onScroll={handleManualScroll}
+        onWheel={pauseAutoScroll}
+        onTouchStart={pauseAutoScroll}
       >
         {data?.items.length === 0 && (
           <div className="flex h-full items-center justify-center p-4">
