@@ -1,8 +1,8 @@
 "use client";
 
 import useSWR from "swr";
-import { useRef, useEffect, useState, useCallback } from "react";
 import type { WorldNewsResponse, NewsItem } from "@/types/news";
+import { useAutoScroll } from "./useAutoScroll";
 
 const fetcher = (url: string): Promise<WorldNewsResponse> =>
   fetch(url).then((res) => {
@@ -22,7 +22,7 @@ function formatTime(iso: string): string {
 
 function isRecent(iso: string): boolean {
   const diff = Date.now() - new Date(iso).getTime();
-  return diff < 60 * 60 * 1000; // < 1 hour
+  return diff < 60 * 60 * 1000;
 }
 
 function NewsLine({ item }: { item: NewsItem }) {
@@ -76,56 +76,20 @@ export default function WorldNews() {
     { refreshInterval: 300000, dedupingInterval: 60000 }
   );
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [autoScroll, setAutoScroll] = useState(true);
-  const animFrameRef = useRef<number>(0);
-
-  const tick = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || !autoScroll) return;
-
-    el.scrollTop += 0.5;
-
-    if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
-      el.scrollTop = 0;
-    }
-
-    animFrameRef.current = requestAnimationFrame(tick);
-  }, [autoScroll]);
-
-  useEffect(() => {
-    cancelAnimationFrame(animFrameRef.current);
-    if (autoScroll) {
-      animFrameRef.current = requestAnimationFrame(tick);
-    }
-    return () => cancelAnimationFrame(animFrameRef.current);
-  }, [autoScroll, tick]);
-
-  const handleToggle = () => {
-    setAutoScroll((prev) => !prev);
-  };
-
-  const pauseAutoScroll = () => setAutoScroll(false);
-
-  const scrollByStep = (direction: "up" | "down") => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const step = Math.max(80, Math.floor(el.clientHeight * 0.35));
-    const delta = direction === "up" ? -step : step;
-
-    pauseAutoScroll();
-    el.scrollBy({ top: delta, behavior: "smooth" });
-  };
+  const {
+    autoScroll,
+    scrollRef,
+    toggleAutoScroll,
+    pauseAutoScroll,
+    scrollByStep,
+    handleScroll,
+  } = useAutoScroll();
 
   if (isLoading) {
     return (
       <div className="flex h-full flex-col justify-center gap-2 p-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-2 px-3 py-1.5"
-          >
+          <div key={i} className="flex items-center gap-2 px-3 py-1.5">
             <span
               className="text-[10px] tracking-[0.3em] uppercase"
               style={{ color: "var(--hud-text-dim)" }}
@@ -155,7 +119,6 @@ export default function WorldNews() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* Status bar */}
       <div
         className="flex items-center justify-between gap-2 px-3 py-1"
         style={{ borderBottom: "1px solid rgba(0, 255, 65, 0.1)" }}
@@ -198,7 +161,7 @@ export default function WorldNews() {
             ▼
           </button>
           <button
-            onClick={handleToggle}
+            onClick={toggleAutoScroll}
             className="px-1 text-[9px] tracking-wider uppercase"
             style={{
               color: autoScroll ? "var(--hud-border)" : "var(--hud-text-dim)",
@@ -212,10 +175,10 @@ export default function WorldNews() {
         </div>
       </div>
 
-      {/* News list */}
       <div
         ref={scrollRef}
         className="min-h-0 flex-1 overflow-y-auto"
+        onScroll={handleScroll}
         onWheel={pauseAutoScroll}
         onTouchStart={pauseAutoScroll}
         onPointerDown={pauseAutoScroll}
