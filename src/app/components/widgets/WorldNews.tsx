@@ -78,6 +78,7 @@ export default function WorldNews() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const userPausedRef = useRef(false);
   const animFrameRef = useRef<number>(0);
 
   const tick = useCallback(() => {
@@ -86,7 +87,6 @@ export default function WorldNews() {
 
     el.scrollTop += 0.5;
 
-    // Loop back to top when reached bottom
     if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
       el.scrollTop = 0;
     }
@@ -101,8 +101,18 @@ export default function WorldNews() {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [autoScroll, tick]);
 
-  const handleMouseEnter = () => setAutoScroll(false);
-  const handleMouseLeave = () => setAutoScroll(true);
+  const handleToggle = () => {
+    const next = !autoScroll;
+    userPausedRef.current = !next;
+    setAutoScroll(next);
+  };
+
+  const handleMouseEnter = () => {
+    if (!userPausedRef.current) setAutoScroll(false);
+  };
+  const handleMouseLeave = () => {
+    if (!userPausedRef.current) setAutoScroll(true);
+  };
 
   if (isLoading) {
     return (
@@ -154,7 +164,7 @@ export default function WorldNews() {
           {data?.items.filter((i) => isRecent(i.timestamp)).length ?? 0} NEW
         </span>
         <button
-          onClick={() => setAutoScroll((prev) => !prev)}
+          onClick={handleToggle}
           className="text-[9px] tracking-wider uppercase"
           style={{
             color: autoScroll ? "var(--hud-border)" : "var(--hud-text-dim)",

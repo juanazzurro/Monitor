@@ -97,6 +97,7 @@ export default function ArgentinaEcon() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const userPausedRef = useRef(false);
   const animFrameRef = useRef<number>(0);
 
   const tick = useCallback(() => {
@@ -118,8 +119,18 @@ export default function ArgentinaEcon() {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [autoScroll, tick]);
 
-  const handleMouseEnter = () => setAutoScroll(false);
-  const handleMouseLeave = () => setAutoScroll(true);
+  const handleToggle = () => {
+    const next = !autoScroll;
+    userPausedRef.current = !next;
+    setAutoScroll(next);
+  };
+
+  const handleMouseEnter = () => {
+    if (!userPausedRef.current) setAutoScroll(false);
+  };
+  const handleMouseLeave = () => {
+    if (!userPausedRef.current) setAutoScroll(true);
+  };
 
   if (isLoading) {
     return (
@@ -169,7 +180,7 @@ export default function ArgentinaEcon() {
           {data?.items.length ?? 0} ALERTAS · {highCount} PRIORITY
         </span>
         <button
-          onClick={() => setAutoScroll((prev) => !prev)}
+          onClick={handleToggle}
           className="text-[9px] tracking-wider uppercase"
           style={{
             color: autoScroll ? "var(--hud-amber)" : "var(--hud-text-dim)",
