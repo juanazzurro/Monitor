@@ -22,20 +22,20 @@ export const CATEGORY_ICONS: Record<WidgetCategory, string> = {
 
 export const widgets: WidgetConfig[] = [
   {
-    id: "market-ticker",
-    title: "MARKET TICKER",
-    size: "xl",
-    refreshInterval: 30000,
-    component: MarketTicker,
-    category: "markets",
-  },
-  {
     id: "world-news",
     title: "WORLD NEWS INTERCEPT",
     size: "lg",
     refreshInterval: 300000,
     component: WorldNews,
     category: "news",
+  },
+  {
+    id: "market-ticker",
+    title: "MARKET TICKER",
+    size: "lg",
+    refreshInterval: 30000,
+    component: MarketTicker,
+    category: "markets",
   },
   {
     id: "argentina-econ",
