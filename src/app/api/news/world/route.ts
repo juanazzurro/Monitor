@@ -12,7 +12,9 @@ interface FeedSource {
 const FEEDS: FeedSource[] = [
   { url: "https://feeds.bbci.co.uk/news/world/rss.xml", name: "BBC" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", name: "ALJAZEERA" },
-  { url: "https://feeds.reuters.com/Reuters/worldNews", name: "REUTERS" },
+  { url: "https://www.reutersagency.com/feed/?best-topics=world&post_type=best", name: "REUTERS" },
+  { url: "https://www.france24.com/en/rss", name: "FRANCE24" },
+  { url: "https://feeds.bloomberg.com/markets/news.rss", name: "BLOOMBERG" },
   { url: "https://rsshub.app/apnews/topics/apf-topnews", name: "AP" },
 ];
 
