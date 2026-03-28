@@ -1,6 +1,7 @@
 import { WidgetConfig, WidgetSize, WidgetCategory } from "@/types/widget";
 import PlaceholderWidget from "@/app/components/widgets/PlaceholderWidget";
 import MarketTicker from "@/app/components/widgets/MarketTicker";
+import WorldNews from "@/app/components/widgets/WorldNews";
 
 export const WIDGET_SIZE_CLASS: Record<WidgetSize, string> = {
   sm: "widget-1x1",
@@ -48,10 +49,11 @@ export const widgets: WidgetConfig[] = [
     category: "crypto",
   },
   {
-    id: "placeholder-4",
-    title: "STANDBY",
+    id: "world-news",
+    title: "WORLD NEWS INTERCEPT",
     size: "xl",
-    component: PlaceholderWidget,
+    refreshInterval: 300000,
+    component: WorldNews,
     category: "news",
   },
 ];
