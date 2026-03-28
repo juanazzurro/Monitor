@@ -115,6 +115,7 @@ export default function ArgentinaEcon() {
   }, [autoScroll]);
 
   useEffect(() => {
+    cancelAnimationFrame(animFrameRef.current);
     if (autoScroll) {
       animFrameRef.current = requestAnimationFrame(tick);
     }
@@ -135,6 +136,7 @@ export default function ArgentinaEcon() {
     const delta = direction === "up" ? -step : step;
 
     pauseAutoScroll();
+    el.scrollBy({ top: delta, behavior: "smooth" });
     isProgrammaticScrollRef.current = true;
     el.scrollBy({ top: delta, behavior: "smooth" });
     window.setTimeout(() => {
@@ -243,6 +245,9 @@ export default function ArgentinaEcon() {
       <div
         ref={scrollRef}
         className="min-h-0 flex-1 overflow-y-auto"
+        onWheel={pauseAutoScroll}
+        onTouchStart={pauseAutoScroll}
+        onPointerDown={pauseAutoScroll}
         onScroll={handleManualScroll}
         onWheel={pauseAutoScroll}
         onTouchStart={pauseAutoScroll}
