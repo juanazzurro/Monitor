@@ -53,4 +53,12 @@ export const widgets: WidgetConfig[] = [
     component: BTCPanel,
     category: "crypto",
   },
+  {
+    id: "widget-placeholder",
+    title: "WIDGET PLACEHOLDER",
+    size: "md",
+    refreshInterval: 60000,
+    component: PlaceholderWidget,
+    category: "custom",
+  },
 ];
