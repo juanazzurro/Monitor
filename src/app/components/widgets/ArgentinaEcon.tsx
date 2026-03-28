@@ -1,8 +1,8 @@
 "use client";
 
 import useSWR from "swr";
-import { useRef, useEffect, useState, useCallback } from "react";
 import type { ArgentinaNewsResponse, ArgentinaNewsItem } from "@/types/news";
+import { useAutoScroll } from "./useAutoScroll";
 
 const fetcher = (url: string): Promise<ArgentinaNewsResponse> =>
   fetch(url).then((res) => {
@@ -95,58 +95,14 @@ export default function ArgentinaEcon() {
     { refreshInterval: 300000, dedupingInterval: 60000 }
   );
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [autoScroll, setAutoScroll] = useState(true);
-  const animFrameRef = useRef<number>(0);
-  const isProgrammaticScrollRef = useRef(false);
-
-  const tick = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || !autoScroll) return;
-
-    isProgrammaticScrollRef.current = true;
-    el.scrollTop += 0.5;
-    if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
-      el.scrollTop = 0;
-    }
-    isProgrammaticScrollRef.current = false;
-
-    animFrameRef.current = requestAnimationFrame(tick);
-  }, [autoScroll]);
-
-  useEffect(() => {
-    cancelAnimationFrame(animFrameRef.current);
-    if (autoScroll) {
-      animFrameRef.current = requestAnimationFrame(tick);
-    }
-    return () => cancelAnimationFrame(animFrameRef.current);
-  }, [autoScroll, tick]);
-
-  const handleToggle = () => {
-    setAutoScroll((prev) => !prev);
-  };
-
-  const pauseAutoScroll = () => setAutoScroll(false);
-
-  const scrollByStep = (direction: "up" | "down") => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const step = Math.max(80, Math.floor(el.clientHeight * 0.35));
-    const delta = direction === "up" ? -step : step;
-
-    pauseAutoScroll();
-    isProgrammaticScrollRef.current = true;
-    el.scrollBy({ top: delta, behavior: "smooth" });
-    window.setTimeout(() => {
-      isProgrammaticScrollRef.current = false;
-    }, 220);
-  };
-
-  const handleManualScroll = () => {
-    if (isProgrammaticScrollRef.current) return;
-    pauseAutoScroll();
-  };
+  const {
+    autoScroll,
+    scrollRef,
+    toggleAutoScroll,
+    pauseAutoScroll,
+    scrollByStep,
+    handleScroll,
+  } = useAutoScroll();
 
   if (isLoading) {
     return (
@@ -184,7 +140,6 @@ export default function ArgentinaEcon() {
 
   return (
     <div className="argentina-econ-shell flex h-full flex-col">
-      {/* Status bar */}
       <div
         className="flex items-center justify-between gap-2 px-3 py-1"
         style={{ borderBottom: "1px solid rgba(255, 191, 0, 0.15)" }}
@@ -226,7 +181,7 @@ export default function ArgentinaEcon() {
             ▼
           </button>
           <button
-            onClick={handleToggle}
+            onClick={toggleAutoScroll}
             className="px-1 text-[9px] tracking-wider uppercase"
             style={{
               color: autoScroll ? "var(--hud-amber)" : "var(--hud-text-dim)",
@@ -240,13 +195,13 @@ export default function ArgentinaEcon() {
         </div>
       </div>
 
-      {/* News list */}
       <div
         ref={scrollRef}
         className="min-h-0 flex-1 overflow-y-auto"
-        onScroll={handleManualScroll}
+        onScroll={handleScroll}
         onWheel={pauseAutoScroll}
         onTouchStart={pauseAutoScroll}
+        onPointerDown={pauseAutoScroll}
       >
         {data?.items.length === 0 && (
           <div className="flex h-full items-center justify-center p-4">
