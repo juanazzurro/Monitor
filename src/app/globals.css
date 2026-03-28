@@ -137,14 +137,14 @@ body {
 }
 
 /* Widget size variants */
-.widget-1x1 { grid-column: span 1; grid-row: span 1; }
-.widget-2x1 { grid-column: span 1; grid-row: span 1; }
-.widget-2x2 { grid-column: span 1; grid-row: span 2; }
-.widget-4x1 { grid-column: span 1; grid-row: span 1; max-height: 320px; }
+.widget-1x1 { grid-column: span 1; }
+.widget-2x1 { grid-column: span 1; }
+.widget-2x2 { grid-column: span 1; height: 420px; }
+.widget-4x1 { grid-column: span 1; }
 
 @media (min-width: 768px) {
   .widget-2x1 { grid-column: span 2; }
-  .widget-2x2 { grid-column: span 2; }
+  .widget-2x2 { grid-column: span 2; height: 450px; }
   .widget-4x1 { grid-column: span 2; }
 }
 

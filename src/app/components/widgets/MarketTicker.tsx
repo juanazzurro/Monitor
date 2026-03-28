@@ -161,7 +161,7 @@ export default function MarketTicker() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto px-3 py-1">
+    <div className="flex h-full flex-col px-3 py-1">
       {data?.assets.map((asset) => (
         <AssetRow
           key={asset.id}

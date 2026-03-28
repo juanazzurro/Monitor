@@ -180,7 +180,7 @@ export default function WorldNews() {
       {/* News list */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto"
+        className="min-h-0 flex-1 overflow-y-auto"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

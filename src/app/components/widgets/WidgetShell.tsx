@@ -68,7 +68,7 @@ export default function WidgetShell({ title, category, children }: WidgetShellPr
         </div>
 
         {/* Content */}
-        <div className="relative flex-1 overflow-auto">
+        <div className="relative min-h-0 flex-1 overflow-auto">
           <div className="widget-shell-scanlines" />
 
           {isLoading ? (
