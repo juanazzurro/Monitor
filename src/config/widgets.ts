@@ -3,6 +3,7 @@ import PlaceholderWidget from "@/app/components/widgets/PlaceholderWidget";
 import MarketTicker from "@/app/components/widgets/MarketTicker";
 import WorldNews from "@/app/components/widgets/WorldNews";
 import ArgentinaEcon from "@/app/components/widgets/ArgentinaEcon";
+import BTCPanel from "@/app/components/widgets/BTCPanel";
 
 export const WIDGET_SIZE_CLASS: Record<WidgetSize, string> = {
   sm: "widget-1x1",
@@ -29,11 +30,12 @@ export const widgets: WidgetConfig[] = [
     category: "markets",
   },
   {
-    id: "placeholder-1",
-    title: "STANDBY",
+    id: "btc-panel",
+    title: "BTC TRACKER",
     size: "md",
-    component: PlaceholderWidget,
-    category: "custom",
+    refreshInterval: 30000,
+    component: BTCPanel,
+    category: "crypto",
   },
   {
     id: "argentina-econ",
