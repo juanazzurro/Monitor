@@ -51,19 +51,19 @@ function AssetRow({ asset, flash, highlight }: AssetRowProps) {
 
   return (
     <div
-      className={`flex items-center justify-between py-2 ${flashClass} ${highlight ? "ticker-highlight" : ""}`}
-      style={{ borderBottom: "1px solid rgba(0, 255, 65, 0.1)" }}
+      className={`flex items-center justify-between ${highlight ? "py-1.5" : "py-[3px]"} ${flashClass} ${highlight ? "ticker-highlight" : ""}`}
+      style={{ borderBottom: "1px solid rgba(0, 255, 65, 0.08)" }}
     >
       <div className="flex flex-col">
         <span
-          className={`font-bold tracking-wider ${highlight ? "text-sm" : "text-xs"}`}
+          className={`font-bold tracking-wider ${highlight ? "text-xs" : "text-[10px]"}`}
           style={{ color: "var(--hud-text)" }}
         >
           {asset.name}
         </span>
         {asset.error && (
           <span
-            className="text-[8px] tracking-wider"
+            className="text-[7px] tracking-wider"
             style={{ color: "var(--hud-red)" }}
           >
             SIGNAL LOST
@@ -71,9 +71,9 @@ function AssetRow({ asset, flash, highlight }: AssetRowProps) {
         )}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <span
-          className={`font-bold tracking-wide ${highlight ? "text-lg" : "text-sm"}`}
+          className={`font-bold tracking-wide ${highlight ? "text-sm" : "text-xs"}`}
           style={{
             color: asset.error ? "var(--hud-text-dim)" : "var(--hud-border)",
             textShadow:
@@ -83,7 +83,7 @@ function AssetRow({ asset, flash, highlight }: AssetRowProps) {
           {priceStr}
         </span>
         <span
-          className="min-w-[72px] text-right text-xs font-bold tracking-wider"
+          className="min-w-[62px] text-right text-[10px] font-bold tracking-wider"
           style={{ color: changeColor }}
         >
           {arrow} {changeStr}
@@ -126,20 +126,20 @@ export default function MarketTicker() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full flex-col justify-center gap-4 p-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="flex h-full flex-col justify-center gap-1 px-3 py-2">
+        {Array.from({ length: 11 }).map((_, i) => (
           <div
             key={i}
-            className="flex items-center justify-between py-2"
-            style={{ borderBottom: "1px solid rgba(0, 255, 65, 0.1)" }}
+            className="flex items-center justify-between py-[3px]"
+            style={{ borderBottom: "1px solid rgba(0, 255, 65, 0.08)" }}
           >
             <span
-              className="text-[10px] tracking-[0.3em] uppercase"
+              className="text-[9px] tracking-[0.3em] uppercase"
               style={{ color: "var(--hud-text-dim)" }}
             >
               ACQUIRING...
             </span>
-            <div className="widget-scan-bar w-16" />
+            <div className="widget-scan-bar w-12" />
           </div>
         ))}
       </div>
@@ -161,7 +161,7 @@ export default function MarketTicker() {
   }
 
   return (
-    <div className="flex h-full flex-col justify-center px-3 py-2">
+    <div className="flex h-full flex-col overflow-y-auto px-3 py-1">
       {data?.assets.map((asset) => (
         <AssetRow
           key={asset.id}

@@ -3,8 +3,16 @@ import type { MarketAsset, MarketsResponse } from "@/types/market";
 
 export const revalidate = 25;
 
-const FALLBACK_IDS = ["btc", "sp500", "nasdaq", "merval"] as const;
-const FALLBACK_NAMES = ["BTC", "S&P 500", "NASDAQ", "MERVAL"] as const;
+const FALLBACK_IDS = [
+  "btc", "sp500", "dowjones", "nasdaq",
+  "nikkei", "ftse", "dax", "merval",
+  "gold", "oil", "eurusd",
+] as const;
+const FALLBACK_NAMES = [
+  "BTC", "S&P 500", "DOW JONES", "NASDAQ",
+  "NIKKEI 225", "FTSE 100", "DAX", "MERVAL",
+  "GOLD", "OIL WTI", "EUR/USD",
+] as const;
 
 function errorAsset(id: string, name: string, currency: "USD" | "ARS" = "USD"): MarketAsset {
   return { id, name, price: null, change24h: null, currency, error: true };
@@ -96,8 +104,15 @@ export async function GET() {
   const results = await Promise.allSettled([
     fetchBTC(),
     fetchYahoo("^GSPC", "sp500", "S&P 500"),
+    fetchYahoo("^DJI", "dowjones", "DOW JONES"),
     fetchYahoo("^IXIC", "nasdaq", "NASDAQ"),
+    fetchYahoo("^N225", "nikkei", "NIKKEI 225"),
+    fetchYahoo("^FTSE", "ftse", "FTSE 100"),
+    fetchYahoo("^GDAXI", "dax", "DAX"),
     fetchMerval(),
+    fetchYahoo("GC=F", "gold", "GOLD"),
+    fetchYahoo("CL=F", "oil", "OIL WTI"),
+    fetchYahoo("EURUSD=X", "eurusd", "EUR/USD"),
   ]);
 
   const assets: MarketAsset[] = results.map((result, i) => {
