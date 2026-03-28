@@ -94,6 +94,7 @@ export default function WorldNews() {
   }, [autoScroll]);
 
   useEffect(() => {
+    cancelAnimationFrame(animFrameRef.current);
     if (autoScroll) {
       animFrameRef.current = requestAnimationFrame(tick);
     }
@@ -101,14 +102,7 @@ export default function WorldNews() {
   }, [autoScroll, tick]);
 
   const handleToggle = () => {
-    setAutoScroll((prev) => {
-      const next = !prev;
-      if (next) {
-        cancelAnimationFrame(animFrameRef.current);
-        animFrameRef.current = requestAnimationFrame(tick);
-      }
-      return next;
-    });
+    setAutoScroll((prev) => !prev);
   };
 
   const pauseAutoScroll = () => setAutoScroll(false);
