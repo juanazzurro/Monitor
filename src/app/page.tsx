@@ -7,7 +7,11 @@ export default function Home() {
       {widgets.map((widget) => {
         const Component = widget.component;
         return (
-          <div key={widget.id} className={WIDGET_SIZE_CLASS[widget.size]}>
+          <div
+            key={widget.id}
+            className={WIDGET_SIZE_CLASS[widget.size]}
+            data-widget-id={widget.id}
+          >
             <WidgetShell
               title={widget.title}
               category={widget.category}

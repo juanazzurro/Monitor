@@ -46,6 +46,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Custom HUD cursor */
+.hud-cursor,
+.hud-cursor * {
+  cursor: crosshair;
+}
+
+.hud-cursor button,
+.hud-cursor a,
+.hud-cursor [role="button"] {
+  cursor: pointer;
+}
+
 /* ============================================
    Scanline overlay effect
    ============================================ */
