@@ -98,15 +98,18 @@ export default function ArgentinaEcon() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const animFrameRef = useRef<number>(0);
+  const isProgrammaticScrollRef = useRef(false);
 
   const tick = useCallback(() => {
     const el = scrollRef.current;
     if (!el || !autoScroll) return;
 
+    isProgrammaticScrollRef.current = true;
     el.scrollTop += 0.5;
     if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
       el.scrollTop = 0;
     }
+    isProgrammaticScrollRef.current = false;
 
     animFrameRef.current = requestAnimationFrame(tick);
   }, [autoScroll]);
@@ -133,7 +136,16 @@ export default function ArgentinaEcon() {
     const delta = direction === "up" ? -step : step;
 
     pauseAutoScroll();
+    isProgrammaticScrollRef.current = true;
     el.scrollBy({ top: delta, behavior: "smooth" });
+    window.setTimeout(() => {
+      isProgrammaticScrollRef.current = false;
+    }, 220);
+  };
+
+  const handleManualScroll = () => {
+    if (isProgrammaticScrollRef.current) return;
+    pauseAutoScroll();
   };
 
   if (isLoading) {
@@ -232,9 +244,9 @@ export default function ArgentinaEcon() {
       <div
         ref={scrollRef}
         className="min-h-0 flex-1 overflow-y-auto"
+        onScroll={handleManualScroll}
         onWheel={pauseAutoScroll}
         onTouchStart={pauseAutoScroll}
-        onPointerDown={pauseAutoScroll}
       >
         {data?.items.length === 0 && (
           <div className="flex h-full items-center justify-center p-4">
