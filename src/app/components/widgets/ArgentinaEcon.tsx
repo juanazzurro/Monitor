@@ -115,6 +115,7 @@ export default function ArgentinaEcon() {
   }, [autoScroll]);
 
   useEffect(() => {
+    cancelAnimationFrame(animFrameRef.current);
     if (autoScroll) {
       animFrameRef.current = requestAnimationFrame(tick);
     }

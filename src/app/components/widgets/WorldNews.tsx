@@ -78,7 +78,6 @@ export default function WorldNews() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
-  const userPausedRef = useRef(false);
   const animFrameRef = useRef<number>(0);
 
   const tick = useCallback(() => {
@@ -95,6 +94,7 @@ export default function WorldNews() {
   }, [autoScroll]);
 
   useEffect(() => {
+    cancelAnimationFrame(animFrameRef.current);
     if (autoScroll) {
       animFrameRef.current = requestAnimationFrame(tick);
     }
@@ -102,16 +102,20 @@ export default function WorldNews() {
   }, [autoScroll, tick]);
 
   const handleToggle = () => {
-    const next = !autoScroll;
-    userPausedRef.current = !next;
-    setAutoScroll(next);
+    setAutoScroll((prev) => !prev);
   };
 
-  const handleMouseEnter = () => {
-    if (!userPausedRef.current) setAutoScroll(false);
-  };
-  const handleMouseLeave = () => {
-    if (!userPausedRef.current) setAutoScroll(true);
+  const pauseAutoScroll = () => setAutoScroll(false);
+
+  const scrollByStep = (direction: "up" | "down") => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const step = Math.max(80, Math.floor(el.clientHeight * 0.35));
+    const delta = direction === "up" ? -step : step;
+
+    pauseAutoScroll();
+    el.scrollBy({ top: delta, behavior: "smooth" });
   };
 
   if (isLoading) {
@@ -153,7 +157,7 @@ export default function WorldNews() {
     <div className="flex h-full flex-col">
       {/* Status bar */}
       <div
-        className="flex items-center justify-between px-3 py-1"
+        className="flex items-center justify-between gap-2 px-3 py-1"
         style={{ borderBottom: "1px solid rgba(0, 255, 65, 0.1)" }}
       >
         <span
@@ -163,26 +167,58 @@ export default function WorldNews() {
           {data?.items.length ?? 0} INTERCEPTS ·{" "}
           {data?.items.filter((i) => isRecent(i.timestamp)).length ?? 0} NEW
         </span>
-        <button
-          onClick={handleToggle}
-          className="text-[9px] tracking-wider uppercase"
-          style={{
-            color: autoScroll ? "var(--hud-border)" : "var(--hud-text-dim)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          AUTOSCROLL {autoScroll ? "ON" : "OFF"}
-        </button>
+
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => scrollByStep("up")}
+            className="px-1 text-[9px] tracking-wider uppercase"
+            style={{
+              color: "var(--hud-text-dim)",
+              background: "none",
+              border: "1px solid rgba(0, 255, 65, 0.25)",
+              cursor: "pointer",
+            }}
+            aria-label="Scroll up"
+            title="Scroll up"
+          >
+            ▲
+          </button>
+          <button
+            onClick={() => scrollByStep("down")}
+            className="px-1 text-[9px] tracking-wider uppercase"
+            style={{
+              color: "var(--hud-text-dim)",
+              background: "none",
+              border: "1px solid rgba(0, 255, 65, 0.25)",
+              cursor: "pointer",
+            }}
+            aria-label="Scroll down"
+            title="Scroll down"
+          >
+            ▼
+          </button>
+          <button
+            onClick={handleToggle}
+            className="px-1 text-[9px] tracking-wider uppercase"
+            style={{
+              color: autoScroll ? "var(--hud-border)" : "var(--hud-text-dim)",
+              background: "none",
+              border: "1px solid rgba(0, 255, 65, 0.25)",
+              cursor: "pointer",
+            }}
+          >
+            AUTOSCROLL {autoScroll ? "ON" : "OFF"}
+          </button>
+        </div>
       </div>
 
       {/* News list */}
       <div
         ref={scrollRef}
         className="min-h-0 flex-1 overflow-y-auto"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onWheel={pauseAutoScroll}
+        onTouchStart={pauseAutoScroll}
+        onPointerDown={pauseAutoScroll}
       >
         {data?.items.map((item) => (
           <NewsLine key={item.id} item={item} />

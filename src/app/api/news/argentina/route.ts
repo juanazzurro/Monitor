@@ -3,6 +3,7 @@ import { XMLParser } from "fast-xml-parser";
 import type { NewsItem, ArgentinaNewsItem, ArgentinaNewsResponse } from "@/types/news";
 
 export const revalidate = 120;
+export const dynamic = "force-dynamic";
 
 interface FeedSource {
   url: string;
@@ -76,7 +77,7 @@ async function fetchFeed(source: FeedSource): Promise<NewsItem[]> {
   try {
     const res = await fetch(source.url, {
       headers: { "User-Agent": "Mozilla/5.0" },
-      next: { revalidate: 120 },
+      cache: "no-store",
     });
     if (!res.ok) return [];
 
@@ -162,5 +163,9 @@ export async function GET() {
     fetchedAt: new Date().toISOString(),
   };
 
-  return NextResponse.json(response);
+  return NextResponse.json(response, {
+    headers: {
+      "Cache-Control": "no-store, max-age=0",
+    },
+  });
 }
