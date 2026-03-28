@@ -1,5 +1,6 @@
 import { WidgetConfig, WidgetSize, WidgetCategory } from "@/types/widget";
 import PlaceholderWidget from "@/app/components/widgets/PlaceholderWidget";
+import MarketTicker from "@/app/components/widgets/MarketTicker";
 
 export const WIDGET_SIZE_CLASS: Record<WidgetSize, string> = {
   sm: "widget-1x1",
@@ -17,6 +18,14 @@ export const CATEGORY_ICONS: Record<WidgetCategory, string> = {
 };
 
 export const widgets: WidgetConfig[] = [
+  {
+    id: "market-ticker",
+    title: "MARKET TICKER",
+    size: "lg",
+    refreshInterval: 30000,
+    component: MarketTicker,
+    category: "markets",
+  },
   {
     id: "placeholder-1",
     title: "STANDBY",
