@@ -9,7 +9,7 @@ export default function Home() {
         return (
           <div
             key={widget.id}
-            className={WIDGET_SIZE_CLASS[widget.size]}
+            className={`widget-item ${WIDGET_SIZE_CLASS[widget.size]}`}
             data-widget-id={widget.id}
           >
             <WidgetShell
