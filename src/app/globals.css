@@ -118,39 +118,34 @@ body {
    ============================================ */
 
 .widget-grid {
-  display: grid;
-  gap: 1rem;
+  column-gap: 1rem;
   padding: 1rem;
-  grid-template-columns: 1fr;
+  column-count: 1;
 }
 
 @media (min-width: 768px) {
   .widget-grid {
-    grid-template-columns: repeat(2, 1fr);
+    column-count: 2;
   }
 }
 
 @media (min-width: 1280px) {
   .widget-grid {
-    grid-template-columns: repeat(4, 1fr);
+    column-count: 4;
   }
+}
+
+.widget-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  overflow: hidden;
 }
 
 /* Widget size variants */
-.widget-1x1 { grid-column: span 1; }
-.widget-2x1 { grid-column: span 1; }
-.widget-2x2 { grid-column: span 1; height: 420px; }
-.widget-4x1 { grid-column: span 1; }
-
-@media (min-width: 768px) {
-  .widget-2x1 { grid-column: span 2; }
-  .widget-2x2 { grid-column: span 2; height: 450px; }
-  .widget-4x1 { grid-column: span 2; }
-}
-
-@media (min-width: 1280px) {
-  .widget-4x1 { grid-column: span 4; }
-}
+.widget-1x1 { max-height: 280px; }
+.widget-2x1 { max-height: 360px; }
+.widget-2x2 { max-height: 380px; }
+.widget-4x1 { max-height: 420px; }
 
 /* ============================================
    Glitch text effect
